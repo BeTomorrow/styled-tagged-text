@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useMemo } from "react";
 import { createLexer } from "../lexer/lexer";
 import { Ast, Node } from "../parser/ast";
 import { parse, ParserOptions } from "../parser/parser";
@@ -12,10 +12,14 @@ export function renderReactElements(
 	tagsStyle: Record<string, any>,
 	removeUnknownTags = false
 ) {
-	const ast = toAst(inputText || "", {
-		parseUnspecifiedTags: removeUnknownTags,
-		supportedTags: new Set(Object.keys(tagsStyle)),
-	});
+	const ast = useMemo(
+		() =>
+			toAst(inputText || "", {
+				parseUnspecifiedTags: removeUnknownTags,
+				supportedTags: new Set(Object.keys(tagsStyle)),
+			}),
+		[inputText, tagsStyle]
+	);
 
 	function getTagStyle(tag: string) {
 		return tagsStyle[tag] || {};
