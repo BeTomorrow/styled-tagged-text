@@ -90,6 +90,8 @@ Will render exactly:
 
 [CodeBox Playground](https://codesandbox.io/s/styled-tagged-text-qb8gf?file=/src/App.tsx)
 
+React-Native and Web demo are available in `example` folder
+
 ## Tips
 
 Define a global style and create wrap our component to easily re-use the same stylesheet and tags.
