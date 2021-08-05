@@ -22,6 +22,7 @@ const tagsStyle = StyleSheet.create({
 
 // Component
 import { StyledTaggedText } from "@betomorrow/styled-tagged-text/native";
+
 <StyledTaggedText tagsStyle={tagsStyle}>
 	Normal [b]Bold[/b] [i][b]Bold Italic[/b] Italic[/i] [emph]Emphasize[/emph]
 </StyledTaggedText>;
@@ -52,6 +53,7 @@ const tagsStyle = {
 
 // Component
 import { StyledTaggedSpan } from "@betomorrow/styled-tagged-text";
+
 <StyledTaggedSpan tagsStyle={tagsStyle}>
 	Normal [b]Bold[/b] [i][b]Bold Italic[/b] Italic[/i] [emph]Emphasize[/emph]
 </StyledTaggedSpan>;
@@ -64,10 +66,10 @@ Use `<StyledTaggedSpan>` exactly like a `<span>` components.
 Underneath, `StyledTaggedText` (`StyledTaggedSpan` on web) are just nested `Text` (`span`) components with inline style. They have the exact same behavior, so you can transmit props as well.
 
 ```TSX
-<StyledTaggedText
+<StyledTaggedSpan
 	tagsStyle={{ b: { fontWeight: "bold" }, i: { fontStyle: "italic" }, emph: { color: "#eb4034", fontSize: 16 } }}>
 	Normal [b]Bold[/b] [i][b]Bold Italic[/b] Italic[/i] [emph]Emphasize[/emph]
-</StyledTaggedText>
+</StyledTaggedSpan>
 ```
 
 Will render exactly:
@@ -86,4 +88,25 @@ Will render exactly:
 
 ## Example Playground
 
-<!-- fiddle link -->
+[CodeBox Playground](https://codesandbox.io/s/styled-tagged-text-qb8gf?file=/src/App.tsx)
+
+## Tips
+
+Define a global style and create wrap our component to easily re-use the same stylesheet and tags.
+
+```TSX
+import { TextProps } from "react-native";
+import { StyledTaggedText } from "@betomorrow/styled-tagged-text/native";
+
+const globalStyle = {
+	emph: { color: "#eb4034", fontWeight: "bold" },
+};
+
+export const MyStyledText = (props: TextProps) => <StyledTaggedText tagsStyle={globalStyle} {...props} />;
+```
+
+And everywhere else in your app:
+
+```TSX
+<MyStyledText>Super [emph]cool ![/emph]</MyStyledText>
+```
