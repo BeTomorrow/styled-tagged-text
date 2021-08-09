@@ -18,7 +18,7 @@ export function renderReactElements(
 				parseUnspecifiedTags: removeUnknownTags,
 				supportedTags: new Set(Object.keys(tagsStyle)),
 			}),
-		[inputText, tagsStyle]
+		[inputText, tagsStyle, removeUnknownTags]
 	);
 
 	function getTagStyle(tag: string) {
