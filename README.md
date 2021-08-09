@@ -39,6 +39,7 @@ Use `<StyledTaggedText>` exactly like a `<Text>` components.
 ### Properties
 
 - `removeUnknownTags`: By default, tags with no associated style are treated and displayed as text. Setting to _true_, tags are always removed from the text.
+- `tagsStyle` : A record of style. Keys correspond to the tag name.
 - All `Text` (`span` on web) properties.
 
 ### React component
@@ -94,7 +95,7 @@ React-Native and Web demo are available in `example` folder
 
 ## Tips
 
-Define a global style and create wrap our component to easily re-use the same stylesheet and tags.
+Define a global style and wrap our component to easily re-use the same stylesheet and tags.
 
 ```TSX
 import { TextProps } from "react-native";

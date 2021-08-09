@@ -3,7 +3,7 @@ import { CSSProperties, useState } from "react";
 import * as ReactDOM from "react-dom";
 import { StyledTaggedSpan } from "../..";
 
-const tagsStyle = {
+const tagsStyle: Record<string, CSSProperties> = {
 	b: { fontWeight: "bold" },
 	i: { fontStyle: "italic" },
 	emph: { color: "#eb4034", fontSize: 16 },
@@ -33,7 +33,7 @@ const App = () => {
 					id="unknown-tags"
 					name="unknown-tags"
 					checked={removeUnknownTags}
-					onChange={e => setRemoveUnknownTags(b => !b)}
+					onChange={(e) => setRemoveUnknownTags((b) => !b)}
 				/>
 				<label htmlFor="unknown-tags">Remove unkown tags</label>
 			</div>

@@ -2,7 +2,6 @@ import { StyledTaggedText } from "@betomorrow/styled-tagged-text/native";
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, StatusBar, StyleSheet, Switch, Text, useColorScheme, View } from "react-native";
 import { Colors } from "react-native/Libraries/NewAppScreen";
-
 const App = () => {
 	const [isDarkMode, setDarkMode] = useState(useColorScheme() === "dark");
 	const [ignoreUnknownTags, setIgnoreUnknownTags] = useState(false);
