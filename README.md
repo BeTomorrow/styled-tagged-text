@@ -98,18 +98,33 @@ React-Native and Web demo are available in `example` folder
 Define a global style and wrap our component to easily re-use the same stylesheet and tags.
 
 ```TSX
-import { TextProps } from "react-native";
 import { StyledTaggedText } from "@betomorrow/styled-tagged-text/native";
+import React from "react";
+import { StyleSheet, TextProps } from "react-native";
 
-const globalStyle = {
-	emph: { color: "#eb4034", fontWeight: "bold" },
+interface StyledTextProps extends TextProps {
+	children?: string;
+}
+
+export const StyledText = (props: StyledTextProps) => {
+	const { children, ...otherProps } = props;
+	return (
+		<StyledTaggedText tagsStyle={tagsStyle} {...otherProps}>
+			{children}
+		</StyledTaggedText>
+	);
 };
 
-export const MyStyledText = (props: TextProps) => <StyledTaggedText tagsStyle={globalStyle} {...props} />;
+const tagsStyle = StyleSheet.create({
+	emph: {
+		color: "#1b66e4",
+	},
+});
+
 ```
 
 And everywhere else in your app:
 
 ```TSX
-<MyStyledText>Super [emph]cool ![/emph]</MyStyledText>
+<StyledText>Super [emph]cool ![/emph]</StyledText>
 ```
