@@ -21,12 +21,12 @@ const App = () => {
 				<ScrollView style={backgroundStyle}>
 					<View style={styles.switchContainer}>
 						<Text style={textStyle}>Light</Text>
-						<Switch value={isDarkMode} onValueChange={(val) => setDarkMode(val)} />
+						<Switch value={isDarkMode} onValueChange={val => setDarkMode(val)} />
 						<Text style={textStyle}>Dark</Text>
 					</View>
 					<View style={styles.switchContainer}>
 						<Text style={textStyle}>Ignore unknown tag</Text>
-						<Switch value={ignoreUnknownTags} onValueChange={(val) => setIgnoreUnknownTags(val)} />
+						<Switch value={ignoreUnknownTags} onValueChange={val => setIgnoreUnknownTags(val)} />
 					</View>
 
 					<View

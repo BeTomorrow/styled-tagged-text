@@ -1,6 +1,7 @@
 import { StyleProp, TextProps, TextStyle } from "react-native";
 import { renderReactElements } from "./react";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const reactNative = require("react-native");
 
 interface StyledTaggedTextProps extends TextProps {
@@ -9,8 +10,8 @@ interface StyledTaggedTextProps extends TextProps {
 	children?: string;
 }
 
-export const StyledTaggedText = (props: StyledTaggedTextProps) => {
+export function StyledTaggedText(props: StyledTaggedTextProps) {
 	const { children: inputText, removeUnknownTags = false, tagsStyle = {}, ...other } = props;
 
 	return renderReactElements(reactNative.Text, other, inputText, tagsStyle, removeUnknownTags);
-};
+}

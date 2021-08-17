@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ReactNode, useMemo } from "react";
 import { createLexer } from "../lexer/lexer";
 import { Ast, Node } from "../parser/ast";
@@ -10,7 +11,7 @@ export function renderReactElements(
 	props: any,
 	inputText: string | undefined,
 	tagsStyle: Record<string, any>,
-	removeUnknownTags = false
+	removeUnknownTags = false,
 ) {
 	const ast = useMemo(
 		() =>
@@ -18,7 +19,7 @@ export function renderReactElements(
 				parseUnspecifiedTags: removeUnknownTags,
 				supportedTags: new Set(Object.keys(tagsStyle)),
 			}),
-		[inputText, tagsStyle, removeUnknownTags]
+		[inputText, tagsStyle, removeUnknownTags],
 	);
 
 	function getTagStyle(tag: string) {

@@ -33,7 +33,7 @@ const App = () => {
 					id="unknown-tags"
 					name="unknown-tags"
 					checked={removeUnknownTags}
-					onChange={(e) => setRemoveUnknownTags((b) => !b)}
+					onChange={() => setRemoveUnknownTags(b => !b)}
 				/>
 				<label htmlFor="unknown-tags">Remove unkown tags</label>
 			</div>

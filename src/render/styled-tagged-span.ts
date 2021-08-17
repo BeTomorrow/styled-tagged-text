@@ -7,7 +7,7 @@ interface StyledTaggedSpanProps extends React.HTMLAttributes<HTMLSpanElement> {
 	children?: string;
 }
 
-export const StyledTaggedSpan = (props: StyledTaggedSpanProps) => {
+export function StyledTaggedSpan(props: StyledTaggedSpanProps) {
 	const { children: inputText, removeUnknownTags = false, tagsStyle = {}, ...other } = props;
 	return renderReactElements("span", other, inputText, tagsStyle, removeUnknownTags);
-};
+}

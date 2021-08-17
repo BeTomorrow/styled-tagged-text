@@ -22,18 +22,12 @@
 	"homepage": "https://github.com/BeTomorrow/styled-tagged-text#readme",
 	"scripts": {
 		"build": "rollup -c && npx -p typescript tsc",
-		"test": "jest"
+		"test": "jest",
+		"lint": "eslint . --ext .ts,.tsx"
 	},
 	"peerDependencies": {
 		"react": ">=16",
 		"react-native": ">=0.57.0"
-	},
-	"prettier": {
-		"printWidth": 120,
-		"bracketSpacing": true,
-		"jsxBracketSameLine": true,
-		"trailingComma": "es5",
-		"useTabs": true
 	},
 	"devDependencies": {
 		"@babel/preset-env": "^7.14.9",
@@ -42,6 +36,8 @@
 		"@types/react": "^17.0.15",
 		"@types/react-dom": "^17.0.9",
 		"@types/react-native": "^0.64.5",
+		"@typescript-eslint/eslint-plugin": "^4.29.2",
+		"@typescript-eslint/parser": "^4.29.2",
 		"eslint": "^7.32.0",
 		"jest": "^27.0.6",
 		"prettier": "^2.3.2",
