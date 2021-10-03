@@ -1,69 +1,63 @@
+import { Node, NodeHelper } from "./node"
 export type Ast = Node[];
-export type Node = LeafNode | TagNode | (LeafNode | TagNode)[];
-
-export interface TagNode {
-	tag: string;
-	content: Node | undefined;
-}
-
-export type LeafNode = string;
 
 export const PlantTree = () => {
-	const tree: Ast = [];
-
+	const nodeHelper = NodeHelper();
+	let tree: Ast = [];
 	let currentNode: Node | undefined;
+	const pendingIndex: number[] = [];
 
-	const toTagNode = (tag: string) => {
-		currentNode = { tag, content: currentNode };
-	};
-
-	const toWordNode = (word: string) => {
-		if (currentNode === undefined) {
-			currentNode = word;
-		} else {
-			appendWordNode(word);
-		}
-	};
-
-	const pushCurrentNode = () => {
-		const previousNode = tree[tree.length - 1];
-		if (currentNode) {
-			if (typeof previousNode === "string" && typeof currentNode === "string") {
-				tree[tree.length - 1] = previousNode + currentNode;
+	function pushNode() {
+		if (currentNode !== undefined) {
+			if (tree.length > 0 && typeof tree[tree.length - 1] === "string" && typeof currentNode === "string") {
+				tree[tree.length - 1] = tree[tree.length - 1] + currentNode;
 			} else {
 				tree.push(currentNode);
 			}
 			currentNode = undefined;
 		}
-	};
-
-	const appendWordNode = (word: string) => {
-		if (typeof currentNode === "string") {
-			currentNode = currentNode + word;
-		} else if (typeof currentNode === "object") {
-			if (Array.isArray(currentNode)) {
-				currentNode.push(word);
-			} else {
-				currentNode = [currentNode, word];
-			}
-		} else {
-			toWordNode(word);
+	}
+	function pushPendingNode() {
+		if (currentNode !== undefined) {
+			pendingIndex.push(tree.length);
+			pushNode()
 		}
-	};
+	}
 
-	const prependWordNode = (word: string) => {
-		if (typeof currentNode === "string") {
-			currentNode = word + currentNode;
-		} else if (typeof currentNode === "object") {
-			if (Array.isArray(currentNode)) {
-				currentNode = [word, ...currentNode];
-			} else {
-				currentNode = [word, currentNode];
-			}
-		} else {
-			toWordNode(word);
+	function appendWordToCurrentNode(word: string) {
+		currentNode = nodeHelper.appendWordNode(currentNode, word)
+	}
+	function prependWordToLastNode(word: string) {
+		if (currentNode) {
+			currentNode = nodeHelper.prependWordNode(currentNode, word)
+		} else if (tree.length > 0) {
+			tree[tree.length - 1] = nodeHelper.appendWordNode(tree[tree.length - 1], word)
 		}
-	};
+	}
+	function toTagNode(tag: string) {
+		currentNode = nodeHelper.toTagNode(currentNode, tag)
+	}
 
-	return { tree, toTagNode, toWordNode, pushCurrentNode, appendWordNode, prependWordNode };
+	function hasCurrentNode() { return currentNode !== undefined; }
+
+	function pendingToTagNode(tag: string) {
+		const firstPendingIndex = pendingIndex.shift();
+
+		const head = tree.slice(0, firstPendingIndex);
+		const tail = tree.slice(firstPendingIndex);
+		tree = [...head, nodeHelper.toTagNode(tail, tag)];
+	}
+
+
+	return {
+		getTree: () => tree,
+		pushNode,
+		pushPendingNode,
+		appendWordToCurrentNode,
+		prependWordToLastNode,
+		toTagNode,
+		hasCurrentNode,
+		pendingToTagNode,
+		hasPendingNode: () => pendingIndex.length > 0
+	};
 };

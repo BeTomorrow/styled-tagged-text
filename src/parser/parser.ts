@@ -3,6 +3,7 @@ import { CLOSE_BRAKET, OPEN_BRAKET, SLASH } from "../domains/char";
 import { Token } from "../domains/token";
 import { TYPE } from "../domains/type";
 import { PlantTree } from "./ast";
+import { NodeHelper } from "./node";
 import { Stack } from "./stack";
 import { TokenCursor } from "./token-cursor";
 
@@ -21,7 +22,14 @@ export const parse = (tokens: Token[], options?: ParserOptions) => {
 	const supportedTags = options?.supportedTags ?? new Set();
 
 	const treeHelper = PlantTree();
+
 	const tagStack = Stack<Token>();
+	let nestedTag: Token[] = [];
+
+	const isClosingTagNested = (tag: string) => {
+		const result = nestedTag.filter(t => t[1] === tag.slice(1)).length > 0;
+		return result
+	}
 	const cursor = TokenCursor(tokens);
 
 	const isSupportedTag = (token: Token) => {
@@ -40,20 +48,22 @@ export const parse = (tokens: Token[], options?: ParserOptions) => {
 	const processToken = () => {
 		const token = cursor.getCurrent();
 		if (isWord(token)) {
-			treeHelper.toWordNode(token[1]);
+			treeHelper.appendWordToCurrentNode(token[1])
 			cursor.skip();
 			return;
 		}
 		if (isTag(token)) {
 			if (isOpeningTag(token)) {
 				if (!isSupportedTag(token)) {
-					treeHelper.appendWordNode(OPEN_BRAKET + token[1] + CLOSE_BRAKET);
+					treeHelper.appendWordToCurrentNode(OPEN_BRAKET + token[1] + CLOSE_BRAKET)
 					cursor.skip();
 					return;
 				}
-
-				if (tagStack.isEmpty()) {
-					treeHelper.pushCurrentNode();
+				if (treeHelper.hasCurrentNode()) {
+					if (!tagStack.isEmpty()) {
+						nestedTag = tagStack.getCopy();
+						treeHelper.pushPendingNode()
+					} else { treeHelper.pushNode() }
 				}
 				tagStack.push(token);
 				cursor.skip();
@@ -61,14 +71,19 @@ export const parse = (tokens: Token[], options?: ParserOptions) => {
 			}
 			if (isClosingTag(token)) {
 				if (isTagPreviouslyOpened(token)) {
-					treeHelper.toTagNode(tagStack.pop()![1]);
+					if (isClosingTagNested(token[1])) {
+						treeHelper.pushNode();
+						treeHelper.pendingToTagNode(tagStack.pop()![1])
+					} else {
+						treeHelper.toTagNode(tagStack.pop()![1]);
+					}
 					if (tagStack.isEmpty()) {
-						treeHelper.pushCurrentNode();
+						treeHelper.pushNode();
 					}
 					cursor.skip();
 					return;
 				} else {
-					treeHelper.appendWordNode(OPEN_BRAKET + token[1] + CLOSE_BRAKET);
+					treeHelper.appendWordToCurrentNode(OPEN_BRAKET + token[1] + CLOSE_BRAKET);
 					cursor.skip();
 					return;
 				}
@@ -81,9 +96,9 @@ export const parse = (tokens: Token[], options?: ParserOptions) => {
 	}
 
 	while (!tagStack.isEmpty()) {
-		treeHelper.prependWordNode(OPEN_BRAKET + tagStack.pop()![1] + CLOSE_BRAKET);
+		treeHelper.prependWordToLastNode(OPEN_BRAKET + tagStack.pop()![1] + CLOSE_BRAKET);
 	}
-	treeHelper.pushCurrentNode();
+	treeHelper.pushNode();
 
-	return treeHelper.tree;
+	return treeHelper.getTree();
 };
