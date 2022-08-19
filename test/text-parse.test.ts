@@ -1,6 +1,6 @@
 import { createLexer } from "../src/lexer/lexer";
-import { parse } from "../src/parser/parser";
-const toAst = (input: string) => parse(createLexer(input).tokenize(), { parseUnspecifiedTags: true });
+import { parseV2 } from "../src/parser/parser-v2";
+const toAst = (input: string) => parseV2(createLexer(input).tokenize(), { parseUnspecifiedTags: true });
 
 describe("Inline styled text parse test", () => {
 	test("Nested Tags", () => {
@@ -61,6 +61,25 @@ describe("Inline styled text parse test", () => {
 		const input = "Normal [/b]Bold";
 		const ast = toAst(input);
 		const output = ["Normal [/b]Bold"];
+		expect(ast).toEqual(output);
+	});
+
+	test("Starting with multiple tags", () => {
+		const input = "[c][b]Foo [a]Bar[/a][/b][/c]";
+		const ast = toAst(input);
+		const output = [{ tag: "c", content: { tag: "b", content: ["Foo ", { tag: "a", content: "Bar" }] } }];
+		expect(ast).toEqual(output);
+	});
+
+	test("Complex nested tag", () => {
+		const input = "[b]Foo [a]Bar[/a] [c][a]Baz[/a][/c][/b]";
+		const ast = toAst(input);
+		const output = [
+			{
+				tag: "b",
+				content: ["Foo ", { tag: "a", content: "Bar" }, " ", { tag: "c", content: { tag: "a", content: "Baz" } }],
+			},
+		];
 		expect(ast).toEqual(output);
 	});
 });

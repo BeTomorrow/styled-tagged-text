@@ -1,9 +1,9 @@
 import { Token } from "../src/domains/token";
 import { TYPE } from "../src/domains/type";
-import { parse } from "../src/parser/parser";
+import { parseV2 } from "../src/parser/parser-v2";
 
 const supportedTags = new Set(["supported"]);
-const parseSupportedTags = (tokens: Token[]) => parse(tokens, { parseUnspecifiedTags: false, supportedTags });
+const parseSupportedTags = (tokens: Token[]) => parseV2(tokens, { parseUnspecifiedTags: false, supportedTags });
 
 const assert = (cond: boolean, msg = "Assertion error") => {
 	if (!cond) throw msg;

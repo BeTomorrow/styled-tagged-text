@@ -1,8 +1,8 @@
 import { Token } from "../src/domains/token";
 import { TYPE } from "../src/domains/type";
-import { parse } from "../src/parser/parser";
+import { parseV2 } from "../src/parser/parser-v2";
 
-const parseAllTags = (tokens: Token[]) => parse(tokens, { parseUnspecifiedTags: true });
+const parseAllTags = (tokens: Token[]) => parseV2(tokens, { parseUnspecifiedTags: true });
 
 describe("Parser", () => {
 	test("Text", () => {
