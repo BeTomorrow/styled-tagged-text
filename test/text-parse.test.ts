@@ -1,6 +1,6 @@
 import { createLexer } from "../src/lexer/lexer";
-import { parseV2 } from "../src/parser/parser-v2";
-const toAst = (input: string) => parseV2(createLexer(input).tokenize(), { parseUnspecifiedTags: true });
+import { parse } from "../src/parser/parser";
+const toAst = (input: string) => parse(createLexer(input).tokenize(), { parseUnspecifiedTags: true });
 
 describe("Inline styled text parse test", () => {
 	test("Nested Tags", () => {
