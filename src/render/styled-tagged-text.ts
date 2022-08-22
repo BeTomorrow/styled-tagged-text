@@ -12,6 +12,9 @@ interface StyledTaggedTextProps extends TextProps {
 
 export function StyledTaggedText(props: StyledTaggedTextProps) {
 	const { children: inputText, removeUnknownTags = false, tagsStyle = {}, ...other } = props;
+	if (reactNative === undefined) {
+		throw new Error("StyledTaggedText is only available on react-native. Use StyledTaggedSpan for Web");
+	}
 
 	return renderReactElements(reactNative.Text, other, inputText, tagsStyle, removeUnknownTags);
 }
