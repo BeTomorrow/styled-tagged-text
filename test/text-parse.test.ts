@@ -1,16 +1,21 @@
-import { createLexer } from "../src/lexer/lexer";
-import { parse } from "../src/parser/parser";
-const toAst = (input: string) => parse(createLexer(input).tokenize(), { parseUnspecifiedTags: true });
+import { toAst } from "../src/ast";
 
 describe("Inline styled text parse test", () => {
 	test("Nested Tags", () => {
 		const input = "Normal [b]Bold[/b] [i][b]Bold Italic[/b] Italic[/i]";
 		const ast = toAst(input);
 		const output = [
-			"Normal ",
-			{ tag: "b", content: "Bold" },
-			" ",
-			{ tag: "i", content: [{ tag: "b", content: "Bold Italic" }, " Italic"] },
+			{ type: "TEXT", value: "Normal " },
+			{ type: "ELEMENT", name: "b", children: [{ type: "TEXT", value: "Bold" }] },
+			{ type: "TEXT", value: " " },
+			{
+				type: "ELEMENT",
+				name: "i",
+				children: [
+					{ type: "ELEMENT", name: "b", children: [{ type: "TEXT", value: "Bold Italic" }] },
+					{ type: "TEXT", value: " Italic" },
+				],
+			},
 		];
 		expect(ast).toEqual(output);
 	});
@@ -18,56 +23,97 @@ describe("Inline styled text parse test", () => {
 	test("Begin with unclosed Tag", () => {
 		const input = "[b]Normal Bold";
 		const ast = toAst(input);
-		const output = ["[b]Normal Bold"];
+		const output = [
+			{ type: "TEXT", value: "[b]" },
+			{ type: "TEXT", value: "Normal Bold" },
+		];
 		expect(ast).toEqual(output);
 	});
 
 	test("Ending with unclosed Tag", () => {
 		const input = "Normal Bold[b]";
 		const ast = toAst(input);
-		const output = ["Normal Bold[b]"];
+		const output = [
+			{ type: "TEXT", value: "Normal Bold" },
+			{ type: "TEXT", value: "[b]" },
+		];
 		expect(ast).toEqual(output);
 	});
 
 	test("unclosed Tag", () => {
 		const input = "Normal [b]Bold";
 		const ast = toAst(input);
-		const output = ["Normal [b]Bold"];
+		const output = [
+			{ type: "TEXT", value: "Normal " },
+			{ type: "TEXT", value: "[b]" },
+			{ type: "TEXT", value: "Bold" },
+		];
 		expect(ast).toEqual(output);
 	});
 
 	test("Not opened Tag", () => {
 		const input = "Foo[/b], [emph]Emphasize[/emph][/bar]";
 		const ast = toAst(input);
-		const output = ["Foo[/b], ", { tag: "emph", content: "Emphasize" }, "[/bar]"];
+		const output = [
+			{ type: "TEXT", value: "Foo" },
+			{ type: "TEXT", value: "[/b]" },
+			{ type: "TEXT", value: ", " },
+			{ type: "ELEMENT", name: "emph", children: [{ type: "TEXT", value: "Emphasize" }] },
+			{ type: "TEXT", value: "[/bar]" },
+		];
 		expect(ast).toEqual(output);
 	});
 
 	test("Begin with closing Tag", () => {
 		const input = "[/b]Normal Bold";
 		const ast = toAst(input);
-		const output = ["[/b]Normal Bold"];
+		const output = [
+			{ type: "TEXT", value: "[/b]" },
+			{ type: "TEXT", value: "Normal Bold" },
+		];
 		expect(ast).toEqual(output);
 	});
 
 	test("Ending with single closing Tag", () => {
 		const input = "Normal Bold[/b]";
 		const ast = toAst(input);
-		const output = ["Normal Bold[/b]"];
+		const output = [
+			{ type: "TEXT", value: "Normal Bold" },
+			{ type: "TEXT", value: "[/b]" },
+		];
 		expect(ast).toEqual(output);
 	});
 
 	test("single closing Tag", () => {
 		const input = "Normal [/b]Bold";
 		const ast = toAst(input);
-		const output = ["Normal [/b]Bold"];
+		const output = [
+			{ type: "TEXT", value: "Normal " },
+			{ type: "TEXT", value: "[/b]" },
+			{ type: "TEXT", value: "Bold" },
+		];
 		expect(ast).toEqual(output);
 	});
 
 	test("Starting with multiple tags", () => {
 		const input = "[c][b]Foo [a]Bar[/a][/b][/c]";
 		const ast = toAst(input);
-		const output = [{ tag: "c", content: { tag: "b", content: ["Foo ", { tag: "a", content: "Bar" }] } }];
+		const output = [
+			{
+				type: "ELEMENT",
+				name: "c",
+				children: [
+					{
+						type: "ELEMENT",
+						name: "b",
+						children: [
+							{ type: "TEXT", value: "Foo " },
+							{ type: "ELEMENT", name: "a", children: [{ type: "TEXT", value: "Bar" }] },
+						],
+					},
+				],
+			},
+		];
 		expect(ast).toEqual(output);
 	});
 
@@ -76,8 +122,18 @@ describe("Inline styled text parse test", () => {
 		const ast = toAst(input);
 		const output = [
 			{
-				tag: "b",
-				content: ["Foo ", { tag: "a", content: "Bar" }, " ", { tag: "c", content: { tag: "a", content: "Baz" } }],
+				type: "ELEMENT",
+				name: "b",
+				children: [
+					{ type: "TEXT", value: "Foo " },
+					{ type: "ELEMENT", name: "a", children: [{ type: "TEXT", value: "Bar" }] },
+					{ type: "TEXT", value: " " },
+					{
+						type: "ELEMENT",
+						name: "c",
+						children: [{ type: "ELEMENT", name: "a", children: [{ type: "TEXT", value: "Baz" }] }],
+					},
+				],
 			},
 		];
 		expect(ast).toEqual(output);

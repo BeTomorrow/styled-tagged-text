@@ -2,6 +2,13 @@
 
 Text component for React and React-Native application. Apply custom styles on specifics parts of your text, by enclosing them with bracket tags. Typically useful when using internationalization.
 
+## Features
+
+- **🧘 Easy to use**: Define a StyleSheet and the style will be applied to all text enclosed with tags, using keys as tag name.
+- **👩‍💻 Web and 📱 Mobile**: Use everywhere. You can use the same logic to apply rich text in your website and in your React-Native mobile app.
+- **🛠 TypeScript support**: styled-tagged-text is written entirely in TypeScript
+- **🐥 Lightweight**: Small library with no dependency resulting in a [5kb bundle](https://bundlephobia.com/package/betomorrow/styled-tagged-text)
+
 ## Usage
 
 ### Installation
@@ -21,7 +28,7 @@ const tagsStyle = StyleSheet.create({
 });
 
 // Component
-import { StyledTaggedText } from "@betomorrow/styled-tagged-text/native";
+import { StyledTaggedText } from "@betomorrow/styled-tagged-text";
 
 <StyledTaggedText tagsStyle={tagsStyle}>
 	Normal [b]Bold[/b] [i][b]Bold Italic[/b] Italic[/i] [emph]Emphasize[/emph]
@@ -38,7 +45,6 @@ Use `<StyledTaggedText>` exactly like a `<Text>` components.
 
 ### Properties
 
-- `removeUnknownTags`: By default, tags with no associated style are treated and displayed as text. Setting to _true_, tags are always removed from the text.
 - `tagsStyle` : A record of style. Keys correspond to the tag name.
 - All `Text` (`span` on web) properties.
 
@@ -98,7 +104,7 @@ React-Native and Web demo are available in `example` folder
 Define a global style and wrap our component to easily re-use the same stylesheet and tags.
 
 ```TSX
-import { StyledTaggedText } from "@betomorrow/styled-tagged-text/native";
+import { StyledTaggedText } from "@betomorrow/styled-tagged-text";
 import React from "react";
 import { StyleSheet, TextProps } from "react-native";
 

@@ -1,8 +1,0 @@
-{
-	"name": "@betomorrow/styled-tagged-text/native",
-	"private": true,
-	"main": "./dist/styled-tagged-text.native.cjs.js",
-	"jsnext:main": "./dist/styled-tagged-text.native.esm.js",
-	"module": "./dist/styled-tagged-text.native.esm.js",
-	"typings": "../dist/native/index.d.ts"
-}

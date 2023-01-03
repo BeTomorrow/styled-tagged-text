@@ -1,57 +1,63 @@
-import { Token } from "../src/domains/token";
-import { TYPE } from "../src/domains/type";
-import { parse } from "../src/parser/parser";
-
-const parseAllTags = (tokens: Token[]) => parse(tokens, { parseUnspecifiedTags: true });
-
+import { parser } from "../src/parser";
+import { Token } from "../src/type";
 describe("Parser", () => {
 	test("Text", () => {
-		const input: Token[] = [[TYPE.WORD, "text"]];
-		const ast = parseAllTags(input);
-		const output = ["text"];
+		const input: Token[] = [{ type: "TEXT", value: "text" }];
+		const ast = [...parser(input)];
+		const output = [{ type: "TEXT", value: "text" }];
 		expect(ast).toEqual(output);
 	});
 	test("Unclosed tag", () => {
 		const input: Token[] = [
-			[TYPE.TAG, "single"],
-			[TYPE.WORD, " text"],
+			{ type: "TEXT", value: "[single]" },
+			{ type: "TEXT", value: " text" },
 		];
-		const ast = parseAllTags(input);
-		const output = ["[single] text"];
+		const ast = [...parser(input)];
+		const output = [
+			{ type: "TEXT", value: "[single]" },
+			{ type: "TEXT", value: " text" },
+		];
 		expect(ast).toEqual(output);
 	});
 
 	test("Enclosing tag", () => {
 		const input: Token[] = [
-			[TYPE.TAG, "b"],
-			[TYPE.WORD, "Bold"],
-			[TYPE.TAG, "/b"],
+			{ type: "TAG_OPEN", value: "b" },
+			{ type: "TEXT", value: "Bold" },
+			{ type: "TAG_CLOSE", value: "b" },
 		];
-		const ast = parseAllTags(input);
-		const output = [{ tag: "b", content: "Bold" }];
+		const ast = [...parser(input)];
+		const output = [{ type: "ELEMENT", name: "b", children: [{ type: "TEXT", value: "Bold" }] }];
 		expect(ast).toEqual(output);
 	});
 
 	test("Nested Tags", () => {
 		const input: Token[] = [
-			[TYPE.WORD, "Normal "],
-			[TYPE.TAG, "b"],
-			[TYPE.WORD, "Bold"],
-			[TYPE.TAG, "/b"],
-			[TYPE.WORD, " "],
-			[TYPE.TAG, "i"],
-			[TYPE.TAG, "b"],
-			[TYPE.WORD, "Bold Italic"],
-			[TYPE.TAG, "/b"],
-			[TYPE.WORD, " Italic"],
-			[TYPE.TAG, "/i"],
+			{ type: "TEXT", value: "Normal " },
+			{ type: "TAG_OPEN", value: "b" },
+			{ type: "TEXT", value: "Bold" },
+			{ type: "TAG_CLOSE", value: "b" },
+			{ type: "TEXT", value: " " },
+			{ type: "TAG_OPEN", value: "i" },
+			{ type: "TAG_OPEN", value: "b" },
+			{ type: "TEXT", value: "Bold Italic" },
+			{ type: "TAG_CLOSE", value: "b" },
+			{ type: "TEXT", value: " Italic" },
+			{ type: "TAG_CLOSE", value: "i" },
 		];
-		const ast = parseAllTags(input);
+		const ast = [...parser(input)];
 		const output = [
-			"Normal ",
-			{ tag: "b", content: "Bold" },
-			" ",
-			{ tag: "i", content: [{ tag: "b", content: "Bold Italic" }, " Italic"] },
+			{ type: "TEXT", value: "Normal " },
+			{ type: "ELEMENT", name: "b", children: [{ type: "TEXT", value: "Bold" }] },
+			{ type: "TEXT", value: " " },
+			{
+				type: "ELEMENT",
+				name: "i",
+				children: [
+					{ type: "ELEMENT", name: "b", children: [{ type: "TEXT", value: "Bold Italic" }] },
+					{ type: "TEXT", value: " Italic" },
+				],
+			},
 		];
 		expect(ast).toEqual(output);
 	});
