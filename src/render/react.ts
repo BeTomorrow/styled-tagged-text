@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { ReactNode } from "react";
+import React from "react";
 import { toAst } from "../ast";
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const React = require("react");
 
 export function renderReactElements(
 	elementToRender: any,
