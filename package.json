@@ -1,7 +1,7 @@
 {
 	"name": "@betomorrow/styled-tagged-text",
 	"author": "BeTomorrow",
-	"version": "2.0.0",
+	"version": "3.0.0",
 	"license": "MIT",
 	"description": "Parse your text and split it into multiple components with custom styles",
 	"main": "dist/index.js",
