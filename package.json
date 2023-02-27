@@ -34,10 +34,13 @@
 		"react-native"
 	],
 	"peerDependencies": {
-		"react": "*"
+		"react": ">=16",
+		"react-native": ">=0.57.0"
 	},
-	"optionalDependencies": {
-		"react-native": "*"
+	"peerDependenciesMeta": {
+		"react-native": {
+			"optional": true
+		}
 	},
 	"devDependencies": {
 		"@babel/preset-env": "^7.20.2",
