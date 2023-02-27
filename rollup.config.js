@@ -24,6 +24,7 @@ const commonPlugins = [
 const configBase = {
 	input: "./src/index.ts",
 	plugins: commonPlugins,
+	external: ["react", "react-native"],
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
